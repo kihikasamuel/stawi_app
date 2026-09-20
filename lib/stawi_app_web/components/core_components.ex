@@ -55,7 +55,10 @@ defmodule StawiAppWeb.CoreComponents do
   slot :inner_block, doc: "the optional inner block that renders the flash message"
 
   def flash(assigns) do
-    assigns = assign_new(assigns, :id, fn -> "flash-#{assigns.kind}" end)
+    assigns =
+      assigns
+      |> assign_new(:id, fn -> "flash-#{assigns[:kind] || "info"}" end)
+      |> update(:id, fn id -> id || "flash-#{assigns[:kind] || "info"}" end)
 
     ~H"""
     <div
@@ -246,7 +249,11 @@ defmodule StawiAppWeb.CoreComponents do
         <select
           id={@id}
           name={@name}
-          class={[@class || "w-full select", @errors != [] && (@error_class || "select-error")]}
+          class={[
+            "select select-bordered w-full rounded-xl bg-base-100 text-base-content focus:select-primary",
+            @class,
+            @errors != [] && (@error_class || "select-error")
+          ]}
           multiple={@multiple}
           {@rest}
         >
@@ -268,7 +275,8 @@ defmodule StawiAppWeb.CoreComponents do
           id={@id}
           name={@name}
           class={[
-            @class || "w-full textarea",
+            "textarea textarea-bordered w-full rounded-xl bg-base-100 text-base-content focus:textarea-primary",
+            @class,
             @errors != [] && (@error_class || "textarea-error")
           ]}
           {@rest}
@@ -291,7 +299,8 @@ defmodule StawiAppWeb.CoreComponents do
           id={@id}
           value={Phoenix.HTML.Form.normalize_value(@type, @value)}
           class={[
-            @class || "w-full input",
+            "input input-bordered w-full rounded-xl bg-base-100 text-base-content focus:input-primary",
+            @class,
             @errors != [] && (@error_class || "input-error")
           ]}
           {@rest}

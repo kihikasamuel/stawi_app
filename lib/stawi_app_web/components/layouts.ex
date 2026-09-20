@@ -1,97 +1,133 @@
 defmodule StawiAppWeb.Layouts do
   @moduledoc """
-  This module holds layouts and related functionality
-  used by your application.
+  Mobile-first layout system for Stawi SME Accounting & Sales app using DaisyUI v5 & Tailwind CSS.
   """
   use StawiAppWeb, :html
 
-  # Embed all files in layouts/* within this module.
-  # The default root.html.heex file contains the HTML
-  # skeleton of your application, namely HTML headers
-  # and other static content.
   embed_templates "layouts/*"
 
-  @doc """
-  Renders your app layout.
-
-  This function is typically invoked from every template,
-  and it often contains your application menu, sidebar,
-  or similar.
-
-  ## Examples
-
-      <Layouts.app flash={@flash}>
-        <h1>Content</h1>
-      </Layouts.app>
-
-  """
   attr :flash, :map, required: true, doc: "the map of flash messages"
-
-  attr :current_scope, :map,
-    default: nil,
-    doc: "the current [scope](https://phoenix.hexdocs.pm/scopes.html)"
-
+  attr :current_scope, :map, default: nil
   slot :inner_block, required: true
 
   def app(assigns) do
     ~H"""
-    <header class="navbar px-4 sm:px-6 lg:px-8">
-      <div class="flex-1">
-        <a href="/" class="flex-1 flex w-fit items-center gap-2">
-          <img src={~p"/images/logo.svg"} width="36" />
-          <span class="text-sm font-semibold">v{Application.spec(:phoenix, :vsn)}</span>
-        </a>
-      </div>
-      <div class="flex-none">
-        <ul class="flex flex-column px-1 space-x-4 items-center">
-          <li>
-            <a href="https://phoenixframework.org/" class="btn btn-ghost">Website</a>
-          </li>
-          <li>
-            <a href="https://github.com/phoenixframework/phoenix" class="btn btn-ghost">GitHub</a>
-          </li>
-          <li>
-            <.theme_toggle />
-          </li>
-          <li>
-            <a href="https://phoenix.hexdocs.pm/overview.html" class="btn btn-primary">
-              Get Started <span aria-hidden="true">&rarr;</span>
-            </a>
-          </li>
-        </ul>
-      </div>
-    </header>
+    <div class="min-h-screen bg-base-200/50 text-base-content flex flex-col font-sans pb-24 md:pb-8">
+      <%!-- Top Sticky Navbar --%>
+      <header class="navbar bg-base-100 border-b border-base-300 sticky top-0 z-30 px-3 sm:px-6 shadow-xs">
+        <div class="flex-1 items-center gap-3">
+          <.link navigate={~p"/"} class="flex items-center gap-2.5 group">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-primary to-accent flex items-center justify-center text-primary-content font-black text-lg shadow-md group-hover:scale-105 transition-transform">
+              S
+            </div>
+            <div>
+              <span class="font-extrabold text-lg tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                STAWI
+              </span>
+              <span class="text-xs font-semibold text-base-content/60 block -mt-1">
+                SME Accounting
+              </span>
+            </div>
+          </.link>
+        </div>
 
-    <main class="px-4 py-20 sm:px-6 lg:px-8">
-      <div class="mx-auto max-w-2xl space-y-4">
+        <%!-- Desktop Nav Links --%>
+        <div class="hidden lg:flex items-center gap-1">
+          <.link navigate={~p"/"} class="btn btn-ghost btn-sm rounded-lg font-medium">
+            <.icon name="hero-home" class="w-4 h-4 mr-1 text-primary" /> Dashboard
+          </.link>
+          <.link navigate={~p"/pos"} class="btn btn-primary btn-sm rounded-lg font-bold shadow-xs">
+            <.icon name="hero-shopping-bag" class="w-4 h-4 mr-1" /> Quick POS
+          </.link>
+          <.link navigate={~p"/sales"} class="btn btn-ghost btn-sm rounded-lg font-medium">
+            <.icon name="hero-receipt-percent" class="w-4 h-4 mr-1 text-accent" /> Sales Log
+          </.link>
+          <.link navigate={~p"/expenses"} class="btn btn-ghost btn-sm rounded-lg font-medium">
+            <.icon name="hero-banknotes" class="w-4 h-4 mr-1 text-warning" /> Expenses
+          </.link>
+          <.link navigate={~p"/products"} class="btn btn-ghost btn-sm rounded-lg font-medium">
+            <.icon name="hero-cube" class="w-4 h-4 mr-1 text-info" /> Products
+          </.link>
+          <.link navigate={~p"/customers"} class="btn btn-ghost btn-sm rounded-lg font-medium">
+            <.icon name="hero-users" class="w-4 h-4 mr-1 text-secondary" /> Customers
+          </.link>
+          <.link navigate={~p"/reports"} class="btn btn-ghost btn-sm rounded-lg font-medium">
+            <.icon name="hero-chart-bar" class="w-4 h-4 mr-1 text-success" /> Financial Reports
+          </.link>
+        </div>
+
+        <div class="flex-none items-center gap-2">
+          <.theme_toggle />
+        </div>
+      </header>
+
+      <%!-- Main Content View --%>
+      <main class="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
         {render_slot(@inner_block)}
-      </div>
-    </main>
+      </main>
 
-    <.flash_group flash={@flash} />
+      <%!-- Mobile Bottom Navigation Bar --%>
+      <nav class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-base-100 border-t border-base-300 px-2 py-1.5 shadow-lg flex items-center justify-around">
+        <.link
+          navigate={~p"/"}
+          class="flex flex-col items-center py-1 px-3 text-xs font-medium rounded-lg text-base-content/70 hover:text-primary transition-colors"
+        >
+          <.icon name="hero-home" class="w-5 h-5 mb-0.5" />
+          <span>Home</span>
+        </.link>
+
+        <.link
+          navigate={~p"/pos"}
+          class="flex flex-col items-center py-1 px-3 text-xs font-bold text-primary hover:scale-105 transition-transform"
+        >
+          <div class="w-10 h-10 -mt-5 rounded-full bg-gradient-to-tr from-primary to-accent flex items-center justify-center text-primary-content shadow-lg border-2 border-base-100">
+            <.icon name="hero-shopping-bag" class="w-5 h-5" />
+          </div>
+          <span class="mt-1">POS</span>
+        </.link>
+
+        <.link
+          navigate={~p"/sales"}
+          class="flex flex-col items-center py-1 px-3 text-xs font-medium rounded-lg text-base-content/70 hover:text-accent transition-colors"
+        >
+          <.icon name="hero-receipt-percent" class="w-5 h-5 mb-0.5" />
+          <span>Sales</span>
+        </.link>
+
+        <.link
+          navigate={~p"/expenses"}
+          class="flex flex-col items-center py-1 px-3 text-xs font-medium rounded-lg text-base-content/70 hover:text-warning transition-colors"
+        >
+          <.icon name="hero-banknotes" class="w-5 h-5 mb-0.5" />
+          <span>Expenses</span>
+        </.link>
+
+        <.link
+          navigate={~p"/reports"}
+          class="flex flex-col items-center py-1 px-3 text-xs font-medium rounded-lg text-base-content/70 hover:text-success transition-colors"
+        >
+          <.icon name="hero-chart-bar" class="w-5 h-5 mb-0.5" />
+          <span>Reports</span>
+        </.link>
+      </nav>
+
+      <.flash_group flash={@flash} />
+    </div>
     """
   end
 
-  @doc """
-  Shows the flash group with standard titles and content.
-
-  ## Examples
-
-      <.flash_group flash={@flash} />
-  """
-  attr :flash, :map, required: true, doc: "the map of flash messages"
-  attr :id, :string, default: "flash-group", doc: "the optional id of flash container"
-
   def flash_group(assigns) do
+    assigns = assign_new(assigns, :id, fn -> "flash-group" end)
+
     ~H"""
-    <div id={@id} aria-live="polite">
-      <.flash kind={:info} flash={@flash} />
-      <.flash kind={:error} flash={@flash} />
+    <div id={@id} aria-live="polite" class="fixed bottom-20 right-4 z-50 max-w-sm space-y-2">
+      <.flash kind={:info} id="flash-info" flash={@flash} />
+      <.flash kind={:error} id="flash-error" flash={@flash} />
 
       <.flash
         id="client-error"
         kind={:error}
-        title={gettext("We can't find the internet")}
+        title={gettext("Connection lost")}
         phx-disconnected={
           show(".phx-client-error #client-error")
           |> JS.remove_attribute("hidden", to: ".phx-client-error #client-error")
@@ -99,58 +135,30 @@ defmodule StawiAppWeb.Layouts do
         phx-connected={hide("#client-error") |> JS.set_attribute({"hidden", ""})}
         hidden
       >
-        {gettext("Attempting to reconnect")}
-        <.icon name="hero-arrow-path" class="ml-1 size-3 motion-safe:animate-spin" />
-      </.flash>
-
-      <.flash
-        id="server-error"
-        kind={:error}
-        title={gettext("Something went wrong!")}
-        phx-disconnected={
-          show(".phx-server-error #server-error")
-          |> JS.remove_attribute("hidden", to: ".phx-server-error #server-error")
-        }
-        phx-connected={hide("#server-error") |> JS.set_attribute({"hidden", ""})}
-        hidden
-      >
-        {gettext("Attempting to reconnect")}
+        {gettext("Attempting to reconnect...")}
         <.icon name="hero-arrow-path" class="ml-1 size-3 motion-safe:animate-spin" />
       </.flash>
     </div>
     """
   end
 
-  @doc """
-  Provides dark vs light theme toggle based on themes defined in app.css.
-
-  See <head> in root.html.heex which applies the theme before page load.
-  """
   def theme_toggle(assigns) do
     ~H"""
-    <div class="card relative flex flex-row items-center border-2 border-base-300 bg-base-300 rounded-full">
-      <div class="absolute w-1/3 h-full rounded-full border-1 border-base-200 bg-base-100 brightness-200 left-0 [[data-theme=light]_&]:left-1/3 [[data-theme=dark]_&]:left-2/3 [[data-theme-source=system]_&]:!left-0 transition-[left]" />
-
+    <div class="card relative flex flex-row items-center border border-base-300 bg-base-200 rounded-full p-0.5">
       <button
-        class="flex p-2 cursor-pointer w-1/3"
-        phx-click={JS.dispatch("phx:set-theme")}
-        data-phx-theme="system"
-      >
-        <.icon name="hero-computer-desktop-micro" class="size-4 opacity-75 hover:opacity-100" />
-      </button>
-
-      <button
-        class="flex p-2 cursor-pointer w-1/3"
+        class="p-1.5 cursor-pointer rounded-full hover:bg-base-300 transition-colors"
         phx-click={JS.dispatch("phx:set-theme")}
         data-phx-theme="light"
+        title="Light Mode"
       >
         <.icon name="hero-sun-micro" class="size-4 opacity-75 hover:opacity-100" />
       </button>
 
       <button
-        class="flex p-2 cursor-pointer w-1/3"
+        class="p-1.5 cursor-pointer rounded-full hover:bg-base-300 transition-colors"
         phx-click={JS.dispatch("phx:set-theme")}
         data-phx-theme="dark"
+        title="Dark Mode"
       >
         <.icon name="hero-moon-micro" class="size-4 opacity-75 hover:opacity-100" />
       </button>
