@@ -31,18 +31,20 @@ defmodule StawiApp.Reports do
     month_sales =
       Sale
       |> where([s], fragment("?::date", s.sale_date) >= ^beginning_of_month)
-      |> select([s], coalesce(sum(s.total_amount), 0.0))
-      |> Repo.one() || Decimal.new("0.0")
+      |> select([s], coalesce(sum(s.total_amount), 0))
+      |> Repo.one()
+      |> to_decimal()
 
     # Monthly Expenses
     month_expenses =
       Expense
       |> where([e], e.date >= ^beginning_of_month)
-      |> select([e], coalesce(sum(e.amount), 0.0))
-      |> Repo.one() || Decimal.new("0.0")
+      |> select([e], coalesce(sum(e.amount), 0))
+      |> Repo.one()
+      |> to_decimal()
 
     # Net Profit for the Month
-    month_net_profit = Decimal.sub(Decimal.new(month_sales), month_expenses)
+    month_net_profit = Decimal.sub(month_sales, month_expenses)
 
     # Account Balances
     accounts = Accounting.list_accounts()
@@ -170,4 +172,10 @@ defmodule StawiApp.Reports do
       acc -> acc.balance
     end
   end
+
+  defp to_decimal(%Decimal{} = val), do: val
+  defp to_decimal(val) when is_integer(val), do: Decimal.new(val)
+  defp to_decimal(val) when is_float(val), do: Decimal.from_float(val)
+  defp to_decimal(val) when is_binary(val), do: Decimal.new(val)
+  defp to_decimal(_), do: Decimal.new("0")
 end

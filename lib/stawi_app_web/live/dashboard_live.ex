@@ -21,7 +21,7 @@ defmodule StawiAppWeb.DashboardLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.app flash={@flash}>
+    <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="space-y-6">
         <%!-- Welcome Header & Quick Action --%>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gradient-to-r from-base-100 to-base-200 p-5 rounded-2xl border border-base-300 shadow-xs">
@@ -36,7 +36,10 @@ defmodule StawiAppWeb.DashboardLive do
           </div>
 
           <div class="flex items-center gap-2">
-            <.link navigate={~p"/pos"} class="btn btn-primary shadow-md font-bold flex-1 sm:flex-none">
+            <.link
+              navigate={~p"/app/pos"}
+              class="btn btn-primary shadow-md font-bold flex-1 sm:flex-none"
+            >
               <.icon name="hero-shopping-bag" class="w-5 h-5 mr-1" /> Start Walk-In Sale
             </.link>
           </div>
@@ -123,7 +126,7 @@ defmodule StawiAppWeb.DashboardLive do
               <h2 class="font-bold text-lg flex items-center gap-2">
                 <.icon name="hero-receipt-percent" class="w-5 h-5 text-accent" /> Recent Sales
               </h2>
-              <.link navigate={~p"/sales"} class="btn btn-ghost btn-xs text-primary">
+              <.link navigate={~p"/app/sales"} class="btn btn-ghost btn-xs text-primary">
                 View All &rarr;
               </.link>
             </div>
@@ -183,7 +186,7 @@ defmodule StawiAppWeb.DashboardLive do
               <h2 class="font-bold text-lg flex items-center gap-2">
                 <.icon name="hero-banknotes" class="w-5 h-5 text-warning" /> Recent Expenses
               </h2>
-              <.link navigate={~p"/expenses"} class="btn btn-ghost btn-xs text-primary">
+              <.link navigate={~p"/app/expenses"} class="btn btn-ghost btn-xs text-primary">
                 View All &rarr;
               </.link>
             </div>
@@ -234,11 +237,16 @@ defmodule StawiAppWeb.DashboardLive do
 
   defp format_money(nil), do: "0.00"
 
-  defp format_money(val) do
+  defp format_money(%Decimal{} = val) do
     val
     |> Decimal.round(2)
     |> Decimal.to_string(:normal)
   end
+
+  defp format_money(val) when is_integer(val), do: format_money(Decimal.new(val))
+  defp format_money(val) when is_float(val), do: format_money(Decimal.from_float(val))
+  defp format_money(val) when is_binary(val), do: format_money(Decimal.new(val))
+  defp format_money(_), do: "0.00"
 
   defp format_time(nil), do: ""
 

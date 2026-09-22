@@ -48,7 +48,7 @@ defmodule StawiAppWeb.CustomersLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.app flash={@flash}>
+    <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="space-y-6">
         <%!-- Header --%>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-base-100 p-5 rounded-2xl border border-base-300 shadow-xs">

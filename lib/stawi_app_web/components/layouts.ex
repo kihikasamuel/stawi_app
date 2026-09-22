@@ -16,7 +16,7 @@ defmodule StawiAppWeb.Layouts do
       <%!-- Top Sticky Navbar --%>
       <header class="navbar bg-base-100 border-b border-base-300 sticky top-0 z-30 px-3 sm:px-6 shadow-xs">
         <div class="flex-1 items-center gap-3">
-          <.link navigate={~p"/"} class="flex items-center gap-2.5 group">
+          <.link navigate={~p"/app/home"} class="flex items-center gap-2.5 group">
             <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-primary to-accent flex items-center justify-center text-primary-content font-black text-lg shadow-md group-hover:scale-105 transition-transform">
               S
             </div>
@@ -30,34 +30,77 @@ defmodule StawiAppWeb.Layouts do
             </div>
           </.link>
         </div>
+        <%= if @current_scope do %>
+          <%!-- Desktop Nav Links --%>
+          <div class="hidden lg:flex items-center gap-1">
+            <.link navigate={~p"/app/home"} class="btn btn-ghost btn-sm rounded-lg font-medium">
+              <.icon name="hero-home" class="w-4 h-4 mr-1 text-primary" /> Dashboard
+            </.link>
+            <.link
+              navigate={~p"/app/pos"}
+              class="btn btn-primary btn-sm rounded-lg font-bold shadow-xs"
+            >
+              <.icon name="hero-shopping-bag" class="w-4 h-4 mr-1" /> Quick POS
+            </.link>
+            <.link navigate={~p"/app/sales"} class="btn btn-ghost btn-sm rounded-lg font-medium">
+              <.icon name="hero-receipt-percent" class="w-4 h-4 mr-1 text-accent" /> Sales Log
+            </.link>
+            <.link navigate={~p"/app/expenses"} class="btn btn-ghost btn-sm rounded-lg font-medium">
+              <.icon name="hero-banknotes" class="w-4 h-4 mr-1 text-warning" /> Expenses
+            </.link>
+            <.link navigate={~p"/app/products"} class="btn btn-ghost btn-sm rounded-lg font-medium">
+              <.icon name="hero-cube" class="w-4 h-4 mr-1 text-info" /> Products
+            </.link>
+            <.link navigate={~p"/app/customers"} class="btn btn-ghost btn-sm rounded-lg font-medium">
+              <.icon name="hero-users" class="w-4 h-4 mr-1 text-secondary" /> Customers
+            </.link>
+            <.link navigate={~p"/app/reports"} class="btn btn-ghost btn-sm rounded-lg font-medium">
+              <.icon name="hero-chart-bar" class="w-4 h-4 mr-1 text-success" /> Financial Reports
+            </.link>
+          </div>
+        <% end %>
 
-        <%!-- Desktop Nav Links --%>
-        <div class="hidden lg:flex items-center gap-1">
-          <.link navigate={~p"/"} class="btn btn-ghost btn-sm rounded-lg font-medium">
-            <.icon name="hero-home" class="w-4 h-4 mr-1 text-primary" /> Dashboard
-          </.link>
-          <.link navigate={~p"/pos"} class="btn btn-primary btn-sm rounded-lg font-bold shadow-xs">
-            <.icon name="hero-shopping-bag" class="w-4 h-4 mr-1" /> Quick POS
-          </.link>
-          <.link navigate={~p"/sales"} class="btn btn-ghost btn-sm rounded-lg font-medium">
-            <.icon name="hero-receipt-percent" class="w-4 h-4 mr-1 text-accent" /> Sales Log
-          </.link>
-          <.link navigate={~p"/expenses"} class="btn btn-ghost btn-sm rounded-lg font-medium">
-            <.icon name="hero-banknotes" class="w-4 h-4 mr-1 text-warning" /> Expenses
-          </.link>
-          <.link navigate={~p"/products"} class="btn btn-ghost btn-sm rounded-lg font-medium">
-            <.icon name="hero-cube" class="w-4 h-4 mr-1 text-info" /> Products
-          </.link>
-          <.link navigate={~p"/customers"} class="btn btn-ghost btn-sm rounded-lg font-medium">
-            <.icon name="hero-users" class="w-4 h-4 mr-1 text-secondary" /> Customers
-          </.link>
-          <.link navigate={~p"/reports"} class="btn btn-ghost btn-sm rounded-lg font-medium">
-            <.icon name="hero-chart-bar" class="w-4 h-4 mr-1 text-success" /> Financial Reports
-          </.link>
-        </div>
-
-        <div class="flex-none items-center gap-2">
+        <div class="flex-none items-center gap-2 flex">
           <.theme_toggle />
+          <%= if @current_scope do %>
+            <div class="dropdown dropdown-end">
+              <div tabindex="0" role="button" class="btn btn-ghost btn-sm gap-2">
+                <span class="text-xs font-semibold text-base-content/80 max-w-[120px] truncate sm:max-w-none">
+                  {@current_scope.user.email}
+                </span>
+                <.icon name="hero-chevron-down" class="w-3.5 h-3.5" />
+              </div>
+              <ul
+                tabindex="0"
+                class="dropdown-content menu bg-base-100 rounded-box z-50 w-52 p-2 shadow-lg border border-base-200 mt-2"
+              >
+                <li>
+                  <.link href={~p"/users/settings"} class="font-medium">
+                    <.icon name="hero-cog-6-tooth" class="w-4 h-4 text-base-content/70" /> Settings
+                  </.link>
+                </li>
+                <li>
+                  <.link
+                    href={~p"/users/log-out"}
+                    method="delete"
+                    class="font-medium text-error hover:bg-error/10"
+                  >
+                    <.icon name="hero-arrow-right-on-rectangle" class="w-4 h-4" /> Log out
+                  </.link>
+                </li>
+              </ul>
+            </div>
+          <% else %>
+            <.link href={~p"/users/log-in"} class="btn btn-ghost btn-sm font-medium rounded-lg">
+              Log in
+            </.link>
+            <.link
+              href={~p"/users/register"}
+              class="btn btn-primary btn-sm font-bold rounded-lg shadow-xs"
+            >
+              Register
+            </.link>
+          <% end %>
         </div>
       </header>
 
@@ -66,50 +109,52 @@ defmodule StawiAppWeb.Layouts do
         {render_slot(@inner_block)}
       </main>
 
-      <%!-- Mobile Bottom Navigation Bar --%>
-      <nav class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-base-100 border-t border-base-300 px-2 py-1.5 shadow-lg flex items-center justify-around">
-        <.link
-          navigate={~p"/"}
-          class="flex flex-col items-center py-1 px-3 text-xs font-medium rounded-lg text-base-content/70 hover:text-primary transition-colors"
-        >
-          <.icon name="hero-home" class="w-5 h-5 mb-0.5" />
-          <span>Home</span>
-        </.link>
+      <%= if @current_scope do %>
+        <%!-- Mobile Bottom Navigation Bar --%>
+        <nav class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-base-100 border-t border-base-300 px-2 py-1.5 shadow-lg flex items-center justify-around">
+          <.link
+            navigate={~p"/app/home"}
+            class="flex flex-col items-center py-1 px-3 text-xs font-medium rounded-lg text-base-content/70 hover:text-primary transition-colors"
+          >
+            <.icon name="hero-home" class="w-5 h-5 mb-0.5" />
+            <span>Home</span>
+          </.link>
 
-        <.link
-          navigate={~p"/pos"}
-          class="flex flex-col items-center py-1 px-3 text-xs font-bold text-primary hover:scale-105 transition-transform"
-        >
-          <div class="w-10 h-10 -mt-5 rounded-full bg-gradient-to-tr from-primary to-accent flex items-center justify-center text-primary-content shadow-lg border-2 border-base-100">
-            <.icon name="hero-shopping-bag" class="w-5 h-5" />
-          </div>
-          <span class="mt-1">POS</span>
-        </.link>
+          <.link
+            navigate={~p"/app/pos"}
+            class="flex flex-col items-center py-1 px-3 text-xs font-bold text-primary hover:scale-105 transition-transform"
+          >
+            <div class="w-10 h-10 -mt-5 rounded-full bg-gradient-to-tr from-primary to-accent flex items-center justify-center text-primary-content shadow-lg border-2 border-base-100">
+              <.icon name="hero-shopping-bag" class="w-5 h-5" />
+            </div>
+            <span class="mt-1">POS</span>
+          </.link>
 
-        <.link
-          navigate={~p"/sales"}
-          class="flex flex-col items-center py-1 px-3 text-xs font-medium rounded-lg text-base-content/70 hover:text-accent transition-colors"
-        >
-          <.icon name="hero-receipt-percent" class="w-5 h-5 mb-0.5" />
-          <span>Sales</span>
-        </.link>
+          <.link
+            navigate={~p"/app/sales"}
+            class="flex flex-col items-center py-1 px-3 text-xs font-medium rounded-lg text-base-content/70 hover:text-accent transition-colors"
+          >
+            <.icon name="hero-receipt-percent" class="w-5 h-5 mb-0.5" />
+            <span>Sales</span>
+          </.link>
 
-        <.link
-          navigate={~p"/expenses"}
-          class="flex flex-col items-center py-1 px-3 text-xs font-medium rounded-lg text-base-content/70 hover:text-warning transition-colors"
-        >
-          <.icon name="hero-banknotes" class="w-5 h-5 mb-0.5" />
-          <span>Expenses</span>
-        </.link>
+          <.link
+            navigate={~p"/app/expenses"}
+            class="flex flex-col items-center py-1 px-3 text-xs font-medium rounded-lg text-base-content/70 hover:text-warning transition-colors"
+          >
+            <.icon name="hero-banknotes" class="w-5 h-5 mb-0.5" />
+            <span>Expenses</span>
+          </.link>
 
-        <.link
-          navigate={~p"/reports"}
-          class="flex flex-col items-center py-1 px-3 text-xs font-medium rounded-lg text-base-content/70 hover:text-success transition-colors"
-        >
-          <.icon name="hero-chart-bar" class="w-5 h-5 mb-0.5" />
-          <span>Reports</span>
-        </.link>
-      </nav>
+          <.link
+            navigate={~p"/app/reports"}
+            class="flex flex-col items-center py-1 px-3 text-xs font-medium rounded-lg text-base-content/70 hover:text-success transition-colors"
+          >
+            <.icon name="hero-chart-bar" class="w-5 h-5 mb-0.5" />
+            <span>Reports</span>
+          </.link>
+        </nav>
+      <% end %>
 
       <.flash_group flash={@flash} />
     </div>

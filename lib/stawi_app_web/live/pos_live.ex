@@ -235,7 +235,7 @@ defmodule StawiAppWeb.PosLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.app flash={@flash}>
+    <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         <%!-- Left Section: Search & Touch Product Catalog --%>
         <div class="lg:col-span-7 xl:col-span-8 space-y-4">

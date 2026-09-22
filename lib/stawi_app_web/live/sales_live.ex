@@ -59,7 +59,7 @@ defmodule StawiAppWeb.SalesLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.app flash={@flash}>
+    <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="space-y-6">
         <%!-- Header --%>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-base-100 p-5 rounded-2xl border border-base-300 shadow-xs">
@@ -72,7 +72,7 @@ defmodule StawiAppWeb.SalesLive do
             </p>
           </div>
 
-          <.link navigate={~p"/pos"} class="btn btn-primary font-bold shadow-md">
+          <.link navigate={~p"/app/pos"} class="btn btn-primary font-bold shadow-md">
             <.icon name="hero-plus" class="w-4 h-4 mr-1" /> New Walk-In Sale
           </.link>
         </div>
